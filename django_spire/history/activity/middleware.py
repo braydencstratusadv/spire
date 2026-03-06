@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class ActivityUserMiddleware:
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
