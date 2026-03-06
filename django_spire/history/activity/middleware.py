@@ -29,3 +29,5 @@ class ActivityUserMiddleware:
             reset_current_user(token)
 
         return response
+
+
