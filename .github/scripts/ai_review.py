@@ -244,24 +244,28 @@ def delete_previous_reviews() -> None:
     for review in response.json():
         if review.get('body', '').startswith('AI Code Review') and review.get('user', {}).get('login') == 'github-actions[bot]':
             review_id = review['id']
+            review_state = review.get('state', '')
 
-            delete_response = requests.put(
-                f'{GITHUB_API}/repos/{REPO_FULL_NAME}/pulls/{PR_NUMBER}/reviews/{review_id}/dismissals',
-                headers={
-                    'Authorization': f'Bearer {GH_TOKEN}',
-                    'Accept': 'application/vnd.github+json',
-                    'X-GitHub-Api-Version': '2022-11-28',
-                },
-                json={
-                    'message': 'Superseded by new review.',
-                },
-                timeout=30,
-            )
+            if review_state in ('APPROVED', 'CHANGES_REQUESTED'):
+                dismiss_response = requests.put(
+                    f'{GITHUB_API}/repos/{REPO_FULL_NAME}/pulls/{PR_NUMBER}/reviews/{review_id}/dismissals',
+                    headers={
+                        'Authorization': f'Bearer {GH_TOKEN}',
+                        'Accept': 'application/vnd.github+json',
+                        'X-GitHub-Api-Version': '2022-11-28',
+                    },
+                    json={
+                        'message': 'Superseded by new review.',
+                    },
+                    timeout=30,
+                )
 
-            if delete_response.status_code == 200:
-                print(f'Dismissed previous review {review_id}.')
+                if dismiss_response.status_code == 200:
+                    print(f'Dismissed previous review {review_id}.')
+                else:
+                    print(f'Failed to dismiss review {review_id}: {dismiss_response.status_code}')
             else:
-                print(f'Failed to dismiss review {review_id}: {delete_response.status_code}')
+                print(f'Skipping review {review_id} (state: {review_state}, cannot dismiss).')
 
 
 def post_review(inline_comments: list[dict], body_lines: list[str]) -> None:
