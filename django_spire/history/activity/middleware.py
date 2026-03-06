@@ -14,7 +14,7 @@ class ActivityUserMiddleware:
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         self.get_response = get_response
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request: HttpRequest):
         user = (
             request.user
             if hasattr(request, 'user') and request.user.is_authenticated
