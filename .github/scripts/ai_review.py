@@ -17,7 +17,7 @@ GH_TOKEN = os.environ['GH_TOKEN']
 PR_NUMBER = os.environ['PR_NUMBER']
 REPO_FULL_NAME = os.environ['REPO_FULL_NAME']
 
-MAX_DIFF_LENGTH = 60000
+MAX_DIFF_LENGTH = 1000000
 
 OPENCODE_DIR = Path('.opencode')
 
