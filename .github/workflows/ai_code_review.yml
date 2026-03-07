@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync
-          uv pip install ruff
+          uv pip install ruff unidiff
 
       - name: Determine PR number
         id: pr
