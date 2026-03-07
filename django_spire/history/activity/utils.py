@@ -29,3 +29,5 @@ def add_form_activity(model_object: ActivityMixin, pk: int | bool, user: User) -
     )
 
     add_activity(model_object, user, verb)
+
+
