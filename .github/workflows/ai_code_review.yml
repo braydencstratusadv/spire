@@ -27,9 +27,13 @@ jobs:
       AI_API_HOST: ${{ secrets.AI_API_HOST }}
       AI_API_KEY: ${{ secrets.AI_API_KEY }}
       AI_API_MODEL: ${{ secrets.AI_API_MODEL }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AI_REVIEW_BACKEND: ${{ vars.AI_REVIEW_BACKEND || 'true' }}
+      AI_REVIEW_CONSENSUS_RUNS: ${{ vars.AI_REVIEW_CONSENSUS_RUNS || '3' }}
+      AI_REVIEW_CONSENSUS_THRESHOLD: ${{ vars.AI_REVIEW_CONSENSUS_THRESHOLD || '1' }}
+      AI_REVIEW_FRONTEND: ${{ vars.AI_REVIEW_FRONTEND || 'true' }}
       DANDY_SETTINGS_MODULE: ${{ secrets.DANDY_SETTINGS_MODULE }}
-      PYTHONPATH: ${{ github.workspace }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/.github/scripts
     steps:
       - uses: actions/checkout@v5
         with:
@@ -62,16 +66,12 @@ jobs:
       - name: Fetch PR diff
         id: diff
         run: |
-          echo "PR number: ${{ steps.pr.outputs.number }}"
-          gh pr diff ${{ steps.pr.outputs.number }} --name-only || true
-          echo "---"
           gh pr diff ${{ steps.pr.outputs.number }} > pr_diff.patch
-          echo "Diff size: $(wc -l < pr_diff.patch) lines"
           echo "has_diff=true" >> $GITHUB_OUTPUT
 
       - name: Run AI review
         if: steps.diff.outputs.has_diff == 'true'
-        run: uv run python .github/scripts/ai_review.py
+        run: uv run python -m ai_code_review.main
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO_FULL_NAME: ${{ github.repository }}
