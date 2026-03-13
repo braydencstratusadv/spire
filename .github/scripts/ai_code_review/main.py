@@ -27,8 +27,8 @@ def main() -> None:
         github=github,
     )
 
-    orchestrator.run_ruff()
     orchestrator.run()
+    orchestrator.run_ruff()
 
 
 if __name__ == '__main__':

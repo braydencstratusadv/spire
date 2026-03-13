@@ -98,14 +98,5 @@ class ReviewOrchestrator:
         linter = RuffLinter(diff_set=self.diff_set)
         comment_list = linter.run()
 
-        if not comment_list:
-            return
-
-        line_list = ['**Ruff**', '']
-
-        for comment in comment_list:
-            line_list.append(
-                f'- `{comment["path"]}:{comment["line"]}` — {comment["body"]}',
-            )
-
-        self.github.post_issue_comment('\n'.join(line_list))
+        if comment_list:
+            self.github.post_comments(comment_list)
