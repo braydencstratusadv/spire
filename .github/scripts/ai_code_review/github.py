@@ -103,13 +103,3 @@ class GitHubClient:
                 },
                 timeout=30,
             )
-
-    def post_issue_comment(self, body: str) -> None:
-        if not body:
-            return
-
-        self._session.post(
-            f'{GITHUB_API}/repos/{self._repo}/issues/{self._pr_number}/comments',
-            json={'body': body},
-            timeout=30,
-        )

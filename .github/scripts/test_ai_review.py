@@ -134,15 +134,6 @@ def main() -> None:
     diff_set = DiffSet.from_patch(diff)
     print(f'Changed files ({len(diff_set.paths)}): {diff_set.paths}')
 
-    print('\nRunning Ruff...')
-    linter = RuffLinter(diff_set=diff_set)
-    ruff_comment_list = linter.run()
-    print(f'Ruff: {len(ruff_comment_list)} violation(s)')
-
-    for comment in ruff_comment_list:
-        print(f'  [Ruff] {comment["path"]}:{comment["line"]}')
-        print(f'    {comment["body"]}')
-
     applicable = [
         config for config in _registry
         if config.enabled
@@ -168,7 +159,7 @@ def main() -> None:
             for future in as_completed(future_map)
         )
 
-    print('\n--- Results ---')
+    print('\n--- Review Results ---')
 
     for result in result_list:
         if not result.comment_list:
@@ -180,6 +171,16 @@ def main() -> None:
         for comment in result.comment_list:
             print(f'  {comment["path"]}:{comment["line"]}')
             print(f'    {comment["body"]}')
+
+    print('\n--- Ruff ---')
+
+    linter = RuffLinter(diff_set=diff_set)
+    ruff_comment_list = linter.run()
+    print(f'Ruff: {len(ruff_comment_list)} violation(s)')
+
+    for comment in ruff_comment_list:
+        print(f'  {comment["path"]}:{comment["line"]}')
+        print(f'    {comment["body"]}')
 
 
 if __name__ == '__main__':
