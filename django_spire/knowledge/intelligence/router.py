@@ -23,7 +23,7 @@ class KnowledgeSearchRouter(BaseChatRouter):
         request: WSGIRequest,
         user_input: str,
         message_history: MessageHistory | None = None
-    ) -> BaseMessageIntel:
+    ):
         persona_name = getattr(settings, 'DJANGO_SPIRE_AI_PERSONA_NAME', 'AI Assistant')
 
         system_prompt = (
